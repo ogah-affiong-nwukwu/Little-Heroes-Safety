@@ -1,0 +1,312 @@
+@import "tailwindcss";
+
+/* ============================================================
+   LITTLE HEROES THEME SYSTEM
+   Light theme (default) + dark theme (.dark-theme)
+   ============================================================ */
+:root {
+  --bg: #fff9ec;
+  --surface: #ffffff;
+  --ink: #41345a;
+  --ink-soft: #77699c;
+
+  --sunny: #ffc93c;
+  --sky: #55c6f7;
+  --coral: #ff6b6b;
+  --mint: #45c9b1;
+  --bubble: #ff8fb1;
+  --grape: #9b6bf2;
+  --tangerine: #ff9f45;
+
+  --sunny-soft: #fff1c9;
+  --sky-soft: #dbf2ff;
+  --coral-soft: #ffe2e2;
+  --mint-soft: #dcf7f1;
+  --bubble-soft: #ffe4ee;
+  --grape-soft: #f0e6ff;
+  --tangerine-soft: #ffead2;
+
+  --border: #f0e4c4;
+  --shadow-soft: 0 10px 24px -12px rgba(65, 52, 90, 0.28);
+  --shadow-card: 0 8px 0 0 rgba(65, 52, 90, 0.12);
+  --shadow-btn: 0 5px 0 0 rgba(65, 52, 90, 0.25);
+}
+
+.dark-theme {
+  --bg: #211a3a;
+  --surface: #2e2550;
+  --ink: #f7f1ff;
+  --ink-soft: #c7b9e6;
+
+  --sunny: #ffcf4d;
+  --sky: #4fb8ea;
+  --coral: #ff7d7d;
+  --mint: #4cd7bd;
+  --bubble: #ff9dbe;
+  --grape: #b18cff;
+  --tangerine: #ffab5c;
+
+  --sunny-soft: #4d3f22;
+  --sky-soft: #1f3d52;
+  --coral-soft: #4d2c30;
+  --mint-soft: #1e4540;
+  --bubble-soft: #4d2c3b;
+  --grape-soft: #3d2f61;
+  --tangerine-soft: #4d3822;
+
+  --border: #45396b;
+  --shadow-soft: 0 10px 24px -12px rgba(0, 0, 0, 0.55);
+  --shadow-card: 0 8px 0 0 rgba(0, 0, 0, 0.3);
+  --shadow-btn: 0 5px 0 0 rgba(0, 0, 0, 0.35);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-sunny: var(--sunny);
+  --color-sky: var(--sky);
+  --color-coral: var(--coral);
+  --color-mint: var(--mint);
+  --color-bubble: var(--bubble);
+  --color-grape: var(--grape);
+  --color-tangerine: var(--tangerine);
+  --color-sunny-soft: var(--sunny-soft);
+  --color-sky-soft: var(--sky-soft);
+  --color-coral-soft: var(--coral-soft);
+  --color-mint-soft: var(--mint-soft);
+  --color-bubble-soft: var(--bubble-soft);
+  --color-grape-soft: var(--grape-soft);
+  --color-tangerine-soft: var(--tangerine-soft);
+  --color-borderline: var(--border);
+  --shadow-soft: var(--shadow-soft);
+  --shadow-card: var(--shadow-card);
+  --shadow-btn: var(--shadow-btn);
+  --font-display: "Baloo 2", "Fredoka", ui-rounded, system-ui, sans-serif;
+  --font-body: "Fredoka", "Baloo 2", ui-rounded, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+/* ============================================================
+   COMPONENT CLASSES
+   ============================================================ */
+
+/* Chunky playful card */
+.card-chunky {
+  background-color: var(--surface);
+  border: 3px solid var(--border);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.card-press {
+  box-shadow: var(--shadow-card);
+}
+
+.card-press:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 14px 0 0 rgba(65, 52, 90, 0.14), var(--shadow-soft);
+}
+
+.card-press:active {
+  transform: translateY(2px) scale(0.99);
+  box-shadow: 0 3px 0 0 rgba(65, 52, 90, 0.18);
+}
+
+/* Bouncy button */
+.btn-bounce {
+  transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease, filter 0.15s ease;
+}
+.btn-bounce:hover {
+  transform: translateY(-3px) scale(1.04);
+  filter: brightness(1.05);
+}
+.btn-bounce:active {
+  transform: translateY(2px) scale(0.97);
+}
+
+/* Page transition (fade + slide) */
+.view-enter {
+  animation: view-enter 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@keyframes view-enter {
+  from {
+    opacity: 0;
+    transform: translateY(22px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ============================================================
+   FLIP CARDS
+   ============================================================ */
+.flip-scene {
+  perspective: 1400px;
+}
+
+.flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.65s cubic-bezier(0.4, 0.2, 0.2, 1);
+}
+
+.flip-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(-2deg); }
+  50% { transform: translateY(-12px) rotate(2deg); }
+}
+.animate-floaty { animation: floaty 3.2s ease-in-out infinite; }
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+.animate-wiggle { animation: wiggle 0.9s ease-in-out infinite; }
+
+@keyframes pop-in {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.animate-pop-in { animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+
+@keyframes bounce-soft {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-7px); }
+  60% { transform: translateY(-3px); }
+}
+.animate-bounce-soft { animation: bounce-soft 0.7s ease-in-out; }
+
+@keyframes shake-x {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-6px); }
+  80% { transform: translateX(6px); }
+}
+.animate-shake { animation: shake-x 0.45s ease-in-out; }
+
+@keyframes burst-piece {
+  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1.4); opacity: 0; }
+}
+.burst-piece {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  animation: burst-piece 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(105vh) rotate(720deg); opacity: 0.7; }
+}
+.confetti-piece {
+  position: fixed;
+  top: -5vh;
+  pointer-events: none;
+  z-index: 90;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% { opacity: 0.25; transform: scale(0.7); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+.animate-twinkle { animation: sparkle-twinkle 1.6s ease-in-out infinite; }
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 var(--color-coral, #ff6b6b); }
+  100% { box-shadow: 0 0 0 18px rgba(255, 107, 107, 0); }
+}
+.animate-pulse-ring { animation: pulse-ring 1.6s ease-out infinite; }
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slide-up 0.4s ease-out both; }
+
+/* ============================================================
+   ACCESSIBILITY & MISC
+   ============================================================ */
+button, a {
+  outline-color: var(--grape);
+}
+
+/* Big touch targets on coarse pointers */
+@media (pointer: coarse) {
+  .tap-target {
+    min-height: 3.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ============================================================
+   RESPONSIVE TWEAKS (global breakpoints)
+   ============================================================ */
+@media screen and (max-width: 1140px) {
+  .hero-banner {
+    border-radius: 2rem;
+  }
+  .menu-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+  .display-title {
+    font-size: 2.1rem;
+    line-height: 1.1;
+  }
+  .hero-banner {
+    padding: 1.25rem;
+  }
+  .lesson-card-grid {
+    grid-template-columns: 1fr;
+  }
+}
