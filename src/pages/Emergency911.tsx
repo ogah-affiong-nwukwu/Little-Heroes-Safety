@@ -4,6 +4,7 @@ import { Celebration } from '../components/Celebration'
 import { CALL_STEPS, EMERGENCY_QUIZ, HELPERS } from '../data/emergency'
 import type { LessonPageProps } from '../types'
 import { playRing, playCorrect, playWrong, playCelebrate, playTap } from '../utils/sound'
+import { speak } from '../lib/speak'
 
 export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPageProps) {
   const [quizAnswers, setQuizAnswers] = useState<Record<number, boolean | undefined>>({})
@@ -21,7 +22,10 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
   function awardStar() {
     playCelebrate()
     setCelebration((c) => c + 1)
-    if (!starEarned) onStarEarned()
+    if (!starEarned) {
+      onStarEarned()
+      speak('Yay! You earned a super star, hero!')
+    }
   }
 
   useEffect(() => {
@@ -36,6 +40,7 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
     const correct = isEmergency === EMERGENCY_QUIZ[i].emergency
     if (correct) {
       playCorrect()
+      speak('Great job, hero!')
       const alreadySolved = quizAnswers[i] === EMERGENCY_QUIZ[i].emergency
       setQuizAnswers((prev) => ({ ...prev, [i]: isEmergency }))
       if (!alreadySolved && quizSolvedCount + 1 === EMERGENCY_QUIZ.length && simDone) {
@@ -43,6 +48,7 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
       }
     } else {
       playWrong()
+      speak('Try the other button!')
       setQuizWrong((prev) => new Set(prev).add(i))
       setQuizShake(i)
       window.setTimeout(() => setQuizShake(null), 500)
@@ -64,9 +70,11 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
   function nextSimStep() {
     if (simStep < 4) {
       playTap()
+      speak(simStep === 0 ? 'Nine one one, what is your emergency?' : 'Great job!')
       setSimStep((s) => s + 1)
     } else {
       playCorrect()
+      speak('You did it, hero! Help is on the way!')
       setSimDone(true)
       if (quizComplete) {
         setTimeout(awardStar, 500)
@@ -99,7 +107,7 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
           <p className="font-display text-2xl font-extrabold text-ink">
             🚨 Helper Hero! You know when to call and what to say! 🚨
           </p>
-          <p className="mt-1 text-lg font-medium text-ink-soft">You earned a Super-Star. Helpers like you save the day!</p>
+          <p className="mt-1 text-lg font-medium text-ink/85">You earned a Super-Star. Helpers like you save the day!</p>
         </div>
       )}
 
@@ -213,17 +221,17 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
 
       <section
         className="card-chunky animate-pulse-ring rounded-3xl p-6 text-center sm:p-8"
-        style={{ background: 'linear-gradient(135deg, var(--coral-soft), var(--surface) 60%)', borderColor: 'var(--coral)' }}
+        style={{ backgroundColor: 'var(--coral-soft)', borderColor: 'var(--coral)' }}
       >
         <h2 className="font-display text-2xl font-extrabold text-ink sm:text-3xl">📞 Ready, Hero? Practice the Call!</h2>
-        <p className="mt-2 text-lg font-medium text-ink-soft">
+        <p className="mt-2 text-lg font-medium text-ink/85">
           This is just pretend — we won’t really call anyone. Practice makes perfect!
         </p>
         <button
           type="button"
           onClick={openSim}
-          className="btn-bounce tap-target mt-5 rounded-full px-8 py-4 font-display text-2xl font-extrabold text-white shadow-btn"
-          style={{ backgroundColor: 'var(--coral)' }}
+          className="btn-bounce tap-target mt-5 rounded-full px-8 py-4 font-display text-2xl font-extrabold shadow-btn"
+          style={{ backgroundColor: 'var(--surface)', color: 'var(--coral)' }}
         >
           🚨 Simulate a 911 Call
         </button>
@@ -263,7 +271,7 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
                 📱
               </span>
               <div className="rounded-2xl rounded-tl-none p-3.5 font-medium text-ink" style={{ backgroundColor: 'var(--sky-soft)' }}>
-                <span className="block font-display text-sm font-bold text-ink-soft">Operator</span>
+                <span className="block font-display text-sm font-bold text-ink/85">Operator</span>
                 “9-1-1, what’s your emergency?”
               </div>
             </div>
@@ -271,7 +279,7 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
             {simStep >= 1 && (
               <div className="animate-slide-up mt-3 flex items-center justify-end gap-3">
                 <div className="rounded-2xl rounded-tr-none p-3.5 font-medium text-ink" style={{ backgroundColor: 'var(--mint-soft)' }}>
-                  <span className="block font-display text-sm font-bold text-ink-soft">You</span>
+                  <span className="block font-display text-sm font-bold text-ink/85">You</span>
                   “My name is <strong>[your name]</strong>.”
                 </div>
                 <span aria-hidden="true" className="text-4xl">
@@ -282,7 +290,7 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
             {simStep >= 2 && (
               <div className="animate-slide-up mt-3 flex items-center justify-end gap-3">
                 <div className="rounded-2xl rounded-tr-none p-3.5 font-medium text-ink" style={{ backgroundColor: 'var(--mint-soft)' }}>
-                  <span className="block font-display text-sm font-bold text-ink-soft">You</span>
+                  <span className="block font-display text-sm font-bold text-ink/85">You</span>
                   “I live at <strong>[your address]</strong>.”
                 </div>
                 <span aria-hidden="true" className="text-4xl">
@@ -293,7 +301,7 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
             {simStep >= 3 && (
               <div className="animate-slide-up mt-3 flex items-center justify-end gap-3">
                 <div className="rounded-2xl rounded-tr-none p-3.5 font-medium text-ink" style={{ backgroundColor: 'var(--mint-soft)' }}>
-                  <span className="block font-display text-sm font-bold text-ink-soft">You</span>
+                  <span className="block font-display text-sm font-bold text-ink/85">You</span>
                   “<strong>[What happened]</strong> — please send help!”
                 </div>
                 <span aria-hidden="true" className="text-4xl">
@@ -307,7 +315,7 @@ export function Emergency911({ onBack, onStarEarned, starEarned }: LessonPagePro
                   📱
                 </span>
                 <div className="rounded-2xl rounded-tl-none p-3.5 font-medium text-ink" style={{ backgroundColor: 'var(--sky-soft)' }}>
-                  <span className="block font-display text-sm font-bold text-ink-soft">Operator</span>
+                  <span className="block font-display text-sm font-bold text-ink/85">Operator</span>
                   “Help is on the way! Stay on the line until I say goodbye.”
                 </div>
               </div>

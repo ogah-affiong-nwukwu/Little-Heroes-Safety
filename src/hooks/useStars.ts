@@ -10,6 +10,16 @@ export function useStars() {
     setStars((prev) => (prev.has(lesson) ? prev : new Set(prev).add(lesson)))
   }, [])
 
+  const mergeStars = useCallback((remote: ReadonlySet<LessonId>) => {
+    setStars((prev) => {
+      const missing = [...remote].filter((lesson) => !prev.has(lesson))
+      if (missing.length === 0) return prev
+      const merged = new Set(prev)
+      for (const lesson of missing) merged.add(lesson)
+      return merged
+    })
+  }, [])
+
   useEffect(() => {
     if (previous.current !== stars) {
       saveStars(stars)
@@ -27,5 +37,5 @@ export function useStars() {
     return () => window.removeEventListener('storage', onStorage)
   }, [])
 
-  return { stars, earnStar }
+  return { stars, earnStar, mergeStars }
 }

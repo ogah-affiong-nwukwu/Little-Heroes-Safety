@@ -4,6 +4,7 @@ import { Celebration } from '../components/Celebration'
 import { KIND_WORDS, SCENARIOS } from '../data/friendScenarios'
 import type { LessonPageProps } from '../types'
 import { playCorrect, playWrong, playCelebrate, playTap } from '../utils/sound'
+import { speak } from '../lib/speak'
 
 export function FriendsPage({ onBack, onStarEarned, starEarned }: LessonPageProps) {
   const [answers, setAnswers] = useState<Record<number, number | undefined>>({})
@@ -21,6 +22,7 @@ export function FriendsPage({ onBack, onStarEarned, starEarned }: LessonPageProp
 
     if (optionIndex === scenario.correct) {
       playCorrect()
+      speak(`Great job, hero! ${scenario.praise}`)
       setAnswers((prev) => ({ ...prev, [scenarioIndex]: optionIndex }))
       const newSolved = solvedCount + 1
       if (newSolved === SCENARIOS.length && !starEarned) {
@@ -28,10 +30,12 @@ export function FriendsPage({ onBack, onStarEarned, starEarned }: LessonPageProp
           playCelebrate()
           setCelebration((c) => c + 1)
           onStarEarned()
+          speak('Yay! You earned a super star, hero!')
         }, 600)
       }
     } else {
       playWrong()
+      speak('Oops! Try again, hero!')
       setWrongPicks((prev) => new Set(prev).add(key))
       setShaking(key)
       window.setTimeout(() => setShaking(null), 500)
@@ -65,7 +69,10 @@ export function FriendsPage({ onBack, onStarEarned, starEarned }: LessonPageProp
             <button
               key={phrase}
               type="button"
-              onClick={() => playTap()}
+              onClick={() => {
+                playTap()
+                speak(phrase)
+              }}
               className="btn-bounce card-chunky tap-target rounded-full px-5 py-2.5 font-display text-base font-bold text-ink"
               style={{
                 backgroundColor: ['var(--sky-soft)', 'var(--bubble-soft)', 'var(--sunny-soft)', 'var(--mint-soft)'][i % 4],
@@ -80,7 +87,7 @@ export function FriendsPage({ onBack, onStarEarned, starEarned }: LessonPageProp
       {allSolved && (
         <div className="card-chunky animate-pop-in mb-6 p-5 text-center" style={{ background: 'var(--bubble-soft)' }}>
           <p className="font-display text-2xl font-extrabold text-ink">💛 Friendship Champion! Every answer kind! 💛</p>
-          <p className="mt-1 text-lg font-medium text-ink-soft">You earned a Super-Star for being a great friend.</p>
+          <p className="mt-1 text-lg font-medium text-ink/85">You earned a Super-Star for being a great friend.</p>
         </div>
       )}
 
@@ -88,29 +95,32 @@ export function FriendsPage({ onBack, onStarEarned, starEarned }: LessonPageProp
         {SCENARIOS.map((scenario, si) => {
           const chosen = answers[si]
           const solved = chosen === scenario.correct
+          const brightText = scenario.soft === 'var(--grape-soft)'
           return (
             <section
               key={scenario.question}
               className="card-chunky rounded-3xl p-5 sm:p-6"
-              style={{ background: `linear-gradient(135deg, ${scenario.soft}, var(--surface) 65%)`, borderColor: scenario.color }}
+              style={{ backgroundColor: scenario.soft, borderColor: scenario.color }}
             >
               <div className="flex items-start gap-4">
                 <span
                   aria-hidden="true"
                   className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-4xl shadow-btn"
-                  style={{ backgroundColor: scenario.color }}
+                  style={{ backgroundColor: 'var(--surface)' }}
                 >
                   {scenario.emoji}
                 </span>
                 <div>
-                  <h3 className="font-display text-xl font-extrabold text-ink sm:text-2xl">{scenario.question}</h3>
+                  <h3 className={`font-display text-xl font-extrabold sm:text-2xl ${brightText ? 'on-grape' : 'text-ink'}`}>
+                    {scenario.question}
+                  </h3>
                   {solved && (
                     <p className="animate-pop-in mt-1 rounded-2xl px-3 py-1.5 text-sm font-bold text-white" style={{ backgroundColor: 'var(--mint)' }}>
                       ✓ {scenario.praise}
                     </p>
                   )}
                   {!solved && chosen !== undefined && (
-                    <p className="mt-1 text-sm font-semibold text-ink-soft">
+                    <p className={`mt-1 text-sm font-semibold ${brightText ? 'on-grape' : 'text-ink/85'}`}>
                       🧡 Not quite — {scenario.hint}
                     </p>
                   )}

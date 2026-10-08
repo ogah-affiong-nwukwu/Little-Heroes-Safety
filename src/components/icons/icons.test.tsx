@@ -1,10 +1,11 @@
 import { cleanup, render } from '@testing-library/react'
 import { afterEach, describe, expect, it } from 'vitest'
+import type { ReactElement } from 'react'
 import * as icons from './index'
 
 const ICONS = Object.entries(icons).filter(
   ([name]) => typeof (icons as Record<string, unknown>)[name] === 'function' && name.endsWith('Icon'),
-) as Array<[string, (props: { size?: number }) => JSX.Element]>
+) as Array<[string, (props: { size?: number }) => ReactElement]>
 
 afterEach(() => {
   cleanup()

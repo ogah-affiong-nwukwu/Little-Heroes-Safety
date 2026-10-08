@@ -7,8 +7,12 @@ interface AppHeaderProps {
   totalLessons: number
   soundOn: boolean
   onToggleSound: () => void
+  voiceOn: boolean
+  onToggleVoice: () => void
+  onOpenParent: () => void
   theme: Theme
   onToggleTheme: () => void
+  mascotJump: number
 }
 
 export function AppHeader({
@@ -17,8 +21,12 @@ export function AppHeader({
   totalLessons,
   soundOn,
   onToggleSound,
+  voiceOn,
+  onToggleVoice,
+  onOpenParent,
   theme,
   onToggleTheme,
+  mascotJump,
 }: AppHeaderProps) {
   return (
     <header className="sticky top-0 z-40 border-b-2 border-borderline bg-bg/85 backdrop-blur-md">
@@ -29,7 +37,9 @@ export function AppHeader({
           className="btn-bounce tap-target flex items-center gap-2.5"
           aria-label="Go to Academy home"
         >
-          <Mascot size={46} />
+          <span key={mascotJump} className={mascotJump > 0 ? 'inline-flex animate-jump' : 'inline-flex'}>
+            <Mascot size={46} />
+          </span>
           <span className="hidden font-display text-lg font-extrabold text-ink sm:block">
             Little Heroes Academy
           </span>
@@ -44,6 +54,23 @@ export function AppHeader({
             {starsCount}/{totalLessons}
             <span className="sr-only"> super-stars earned</span>
           </span>
+          <button
+            type="button"
+            onClick={onOpenParent}
+            className="btn-bounce card-chunky tap-target flex h-11 w-11 items-center justify-center rounded-full text-xl"
+            aria-label="Parent login"
+          >
+            🔒
+          </button>
+          <button
+            type="button"
+            onClick={onToggleVoice}
+            className="btn-bounce card-chunky tap-target flex h-11 w-11 items-center justify-center rounded-full text-xl"
+            aria-pressed={voiceOn}
+            aria-label={voiceOn ? 'Turn the friendly voice off' : 'Turn the friendly voice on'}
+          >
+            {voiceOn ? '🗣️' : '🤫'}
+          </button>
           <button
             type="button"
             onClick={onToggleSound}

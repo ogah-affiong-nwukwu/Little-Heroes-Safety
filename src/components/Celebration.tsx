@@ -29,7 +29,7 @@ interface Pieces {
   confetti: ConfettiPiece[]
 }
 
-const CONFETTI_COLORS = ['#ffc93c', '#55c6f7', '#ff6b6b', '#45c9b1', '#ff8fb1', '#9b6bf2', '#ff9f45']
+const CONFETTI_COLORS = ['#FFC928', '#4D96FF', '#FF5C8A', '#35C759', '#8B5CF6', '#FF8A3D', '#FF6B6B']
 const BURST_EMOJIS = ['⭐', '🌟', '✨', '💛', '🎉', '🏆']
 
 function mulberry32(seed: number) {
@@ -62,8 +62,8 @@ function makePieces(trigger: number): Pieces {
     left: rand() * 100,
     color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
     size: 7 + rand() * 8,
-    delay: rand() * 0.5,
-    duration: 1.4 + rand() * 1.1,
+    delay: rand() * 0.4,
+    duration: 1.0 + rand() * 0.5,
     round: rand() > 0.5,
   }))
   return { burst, confetti }
@@ -75,7 +75,7 @@ export function Celebration({ trigger }: CelebrationProps) {
 
   useEffect(() => {
     if (trigger === 0) return undefined
-    const t = setTimeout(() => setDismissed(trigger), 1800)
+    const t = setTimeout(() => setDismissed(trigger), 1900)
     return () => clearTimeout(t)
   }, [trigger])
 

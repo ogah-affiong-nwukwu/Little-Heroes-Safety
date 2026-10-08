@@ -4,6 +4,7 @@ import { Celebration } from '../components/Celebration'
 import { SAFETY_RULES, SAFETY_STEPS, STRANGER_QUIZ } from '../data/safetyRules'
 import type { LessonPageProps } from '../types'
 import { playCheck, playCelebrate, playCorrect, playWrong } from '../utils/sound'
+import { speak } from '../lib/speak'
 
 export function StrangerDanger({ onBack, onStarEarned, starEarned }: LessonPageProps) {
   const [stepsDone, setStepsDone] = useState<Set<number>>(new Set())
@@ -20,6 +21,7 @@ export function StrangerDanger({ onBack, onStarEarned, starEarned }: LessonPageP
       const next = new Set(prev)
       next.add(i)
       playCheck()
+      speak(`${SAFETY_STEPS[i].label}!`)
       return next
     })
   }
@@ -28,14 +30,19 @@ export function StrangerDanger({ onBack, onStarEarned, starEarned }: LessonPageP
     if (quizSolved) return
     if (i === 0) {
       playCorrect()
+      speak('Great job, hero!')
       setQuizPick(i)
       setTimeout(() => {
         playCelebrate()
         setCelebration((c) => c + 1)
-        if (!starEarned) onStarEarned()
+        if (!starEarned) {
+          onStarEarned()
+          speak('Yay! You earned a super star, hero!')
+        }
       }, 500)
     } else {
       playWrong()
+      speak('Uh oh! Try again!')
       setQuizWrong((prev) => new Set(prev).add(i))
     }
   }
@@ -62,7 +69,7 @@ export function StrangerDanger({ onBack, onStarEarned, starEarned }: LessonPageP
           <p className="font-display text-2xl font-extrabold text-ink">
             🛡️ Safety Hero! You know the rules and passed the drill! 🛡️
           </p>
-          <p className="mt-1 text-lg font-medium text-ink-soft">
+          <p className="mt-1 text-lg font-medium text-ink/85">
             You earned a Super-Star. Your shield is always with you!
           </p>
         </div>
@@ -70,12 +77,12 @@ export function StrangerDanger({ onBack, onStarEarned, starEarned }: LessonPageP
 
       <section
         className="card-chunky mb-8 p-5 sm:p-6"
-        style={{ background: 'linear-gradient(135deg, var(--coral-soft), var(--surface) 60%)', borderColor: 'var(--coral)' }}
+        style={{ backgroundColor: 'var(--coral-soft)', borderColor: 'var(--coral)' }}
       >
         <h2 className="font-display text-xl font-extrabold text-ink sm:text-2xl">
           🤔 What is a stranger?
         </h2>
-        <p className="mt-2 text-lg font-medium leading-relaxed text-ink-soft">
+        <p className="mt-2 text-lg font-medium leading-relaxed text-ink/85">
           A stranger is anyone you <strong className="text-ink">don’t know</strong>. Most people are
           nice, but we can’t tell by looking. So we follow the <strong className="text-ink">4 Safe
           Rules</strong> — they are your invisible superhero shield!
@@ -84,23 +91,30 @@ export function StrangerDanger({ onBack, onStarEarned, starEarned }: LessonPageP
 
       <h2 className="mb-4 font-display text-2xl font-extrabold text-ink">🛡️ The 4 Safe Rules</h2>
       <div className="mb-10 grid grid-cols-1 gap-5 sm:grid-cols-2">
-        {SAFETY_RULES.map((rule) => (
-          <article
-            key={rule.title}
-            className="card-chunky card-press rounded-3xl p-5 sm:p-6"
-            style={{ background: `linear-gradient(150deg, ${rule.soft}, var(--surface) 60%)`, borderColor: rule.color }}
-          >
-            <span
-              aria-hidden="true"
-              className="flex h-16 w-16 items-center justify-center rounded-2xl text-4xl shadow-btn"
-              style={{ backgroundColor: rule.color }}
+        {SAFETY_RULES.map((rule) => {
+          const brightText = rule.soft === 'var(--grape-soft)'
+          return (
+            <article
+              key={rule.title}
+              className="card-chunky card-press rounded-3xl p-5 sm:p-6"
+              style={{ backgroundColor: rule.soft, borderColor: rule.color }}
             >
-              {rule.emoji}
-            </span>
-            <h3 className="mt-3 font-display text-xl font-extrabold text-ink">{rule.title}</h3>
-            <p className="mt-1.5 text-base font-medium leading-relaxed text-ink-soft">{rule.detail}</p>
-          </article>
-        ))}
+              <span
+                aria-hidden="true"
+                className="flex h-16 w-16 items-center justify-center rounded-2xl text-4xl shadow-btn"
+                style={{ backgroundColor: 'var(--surface)' }}
+              >
+                {rule.emoji}
+              </span>
+              <h3 className={`mt-3 font-display text-xl font-extrabold ${brightText ? 'on-grape' : 'text-ink'}`}>
+                {rule.title}
+              </h3>
+              <p className={`mt-1.5 text-base font-medium leading-relaxed ${brightText ? 'on-grape' : 'text-ink/85'}`}>
+                {rule.detail}
+              </p>
+            </article>
+          )
+        })}
       </div>
 
       <section className="card-chunky mb-10 p-5 sm:p-6" style={{ borderColor: 'var(--tangerine)' }}>
@@ -144,7 +158,7 @@ export function StrangerDanger({ onBack, onStarEarned, starEarned }: LessonPageP
         )}
       </section>
 
-      <section className="card-chunky rounded-3xl p-5 sm:p-6" style={{ background: `linear-gradient(135deg, ${STRANGER_QUIZ.soft}, var(--surface) 65%)`, borderColor: STRANGER_QUIZ.color }}>
+      <section className="card-chunky rounded-3xl p-5 sm:p-6" style={{ backgroundColor: STRANGER_QUIZ.soft, borderColor: STRANGER_QUIZ.color }}>
         <h3 className="font-display text-xl font-extrabold text-ink sm:text-2xl">🧠 What would YOU do?</h3>
         <p className="mt-1 text-lg font-medium text-ink">{STRANGER_QUIZ.question}</p>
         <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -184,7 +198,7 @@ export function StrangerDanger({ onBack, onStarEarned, starEarned }: LessonPageP
           </p>
         )}
         {!quizSolved && quizWrong.size > 0 && (
-          <p className="mt-3 text-sm font-semibold text-ink-soft">
+          <p className="mt-3 text-sm font-semibold text-ink/85">
             🧡 Remember: never go ANYWHERE with a stranger, even if they seem nice or know your name!
           </p>
         )}

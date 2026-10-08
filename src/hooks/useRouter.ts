@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { TOPICS } from '../data/topics'
 import type { ViewId } from '../types'
 import { playTap } from '../utils/sound'
+import { speak } from '../lib/speak'
 
 const BASE_TITLE = 'Little Heroes Safety & Manners Academy'
 const VIEW_IDS: readonly string[] = ['home', ...TOPICS.map((topic) => topic.id)]
@@ -21,6 +22,8 @@ export function useRouter() {
   const navigate = useCallback((next: ViewId) => {
     setView(next)
     playTap()
+    const topic = TOPICS.find((t) => t.id === next)
+    if (topic) speak(`${topic.title}!`)
     try {
       window.history.pushState({ view: next }, '')
     } catch {

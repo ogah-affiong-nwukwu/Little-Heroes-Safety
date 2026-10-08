@@ -4,6 +4,7 @@ import { Celebration } from '../components/Celebration'
 import { CHORES } from '../data/chores'
 import type { LessonPageProps } from '../types'
 import { playCheck, playCelebrate } from '../utils/sound'
+import { speak } from '../lib/speak'
 
 export function SparklingClean({ onBack, onStarEarned, starEarned }: LessonPageProps) {
   const [done, setDone] = useState<Set<number>>(new Set())
@@ -21,6 +22,7 @@ export function SparklingClean({ onBack, onStarEarned, starEarned }: LessonPageP
       } else {
         next.add(i)
         playCheck()
+        speak(`Yay! ${CHORES[i].title}!`)
         setJustChecked(i)
         window.setTimeout(() => setJustChecked(null), 700)
       }
@@ -29,6 +31,7 @@ export function SparklingClean({ onBack, onStarEarned, starEarned }: LessonPageP
           playCelebrate()
           setCelebration((c) => c + 1)
           onStarEarned()
+          speak('Yay! You earned a super star, hero!')
         }, 450)
       }
       return next
@@ -69,7 +72,7 @@ export function SparklingClean({ onBack, onStarEarned, starEarned }: LessonPageP
             className="h-full rounded-full transition-all duration-500 ease-out"
             style={{
               width: `${percent}%`,
-              background: 'linear-gradient(90deg, var(--sky), var(--mint))',
+              backgroundColor: 'var(--sky)',
             }}
           />
         </div>
@@ -80,13 +83,14 @@ export function SparklingClean({ onBack, onStarEarned, starEarned }: LessonPageP
           <p className="font-display text-2xl font-extrabold text-ink">
             🫧 SUPER SPARKLY! You checked every habit! 🫧
           </p>
-          <p className="mt-1 text-lg font-medium text-ink-soft">You earned a Super-Star. Stay shiny, hero!</p>
+          <p className="mt-1 text-lg font-medium text-ink/85">You earned a Super-Star. Stay shiny, hero!</p>
         </div>
       )}
 
       <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {CHORES.map((chore, i) => {
           const isDone = done.has(i)
+          const brightText = chore.soft === 'var(--grape-soft)'
           return (
             <li key={chore.title}>
               <button
@@ -101,13 +105,25 @@ export function SparklingClean({ onBack, onStarEarned, starEarned }: LessonPageP
                 <span
                   aria-hidden="true"
                   className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl text-4xl shadow-btn"
-                  style={{ backgroundColor: chore.color }}
+                  style={{ backgroundColor: isDone ? 'var(--surface)' : chore.color }}
                 >
                   {chore.emoji}
                 </span>
                 <span className="flex-1">
-                  <span className="block font-display text-xl font-extrabold text-ink">{chore.title}</span>
-                  <span className="block text-sm font-medium leading-snug text-ink-soft">{chore.detail}</span>
+                  <span
+                    className={`block font-display text-xl font-extrabold ${
+                      isDone ? (brightText ? 'on-grape' : 'text-ink') : 'text-ink'
+                    }`}
+                  >
+                    {chore.title}
+                  </span>
+                  <span
+                    className={`block text-sm font-medium leading-snug ${
+                      isDone ? (brightText ? 'on-grape' : 'text-ink/85') : 'text-ink-soft'
+                    }`}
+                  >
+                    {chore.detail}
+                  </span>
                 </span>
                 <span
                   aria-hidden="true"

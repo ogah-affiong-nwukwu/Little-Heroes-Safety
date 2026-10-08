@@ -4,6 +4,7 @@ import { Celebration } from '../components/Celebration'
 import { MAGIC_WORDS } from '../data/magicWords'
 import type { LessonPageProps } from '../types'
 import { playFlip, playCelebrate } from '../utils/sound'
+import { speak } from '../lib/speak'
 
 export function MagicWords({ onBack, onStarEarned, starEarned }: LessonPageProps) {
   const [flipped, setFlipped] = useState<Set<number>>(new Set())
@@ -19,12 +20,14 @@ export function MagicWords({ onBack, onStarEarned, starEarned }: LessonPageProps
       } else {
         next.add(i)
         playFlip()
+        speak(MAGIC_WORDS[i].word)
       }
       if (next.size === MAGIC_WORDS.length && !starEarned) {
         setTimeout(() => {
           playCelebrate()
           setCelebration((c) => c + 1)
           onStarEarned()
+          speak('Yay! You earned a super star, hero!')
         }, 550)
       }
       return next
@@ -53,7 +56,7 @@ export function MagicWords({ onBack, onStarEarned, starEarned }: LessonPageProps
           <p className="font-display text-2xl font-extrabold text-ink">
             🏆 WOW! You unlocked all five Magic Words! 🏆
           </p>
-          <p className="mt-1 text-lg font-medium text-ink-soft">
+          <p className="mt-1 text-lg font-medium text-ink/85">
             You earned a Super-Star! Try using them at home today.
           </p>
         </div>
@@ -62,6 +65,7 @@ export function MagicWords({ onBack, onStarEarned, starEarned }: LessonPageProps
       <div className="lesson-card-grid grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {MAGIC_WORDS.map((word, i) => {
           const isFlipped = flipped.has(i)
+          const brightText = word.soft === 'var(--grape-soft)'
           return (
             <div key={word.word} className="relative">
               <button
@@ -74,17 +78,19 @@ export function MagicWords({ onBack, onStarEarned, starEarned }: LessonPageProps
                   {/* FRONT */}
                   <div
                     className="flip-face card-chunky rounded-3xl p-6"
-                    style={{ background: `linear-gradient(160deg, ${word.soft}, var(--surface))`, borderColor: word.color }}
+                    style={{ backgroundColor: word.soft, borderColor: word.color }}
                   >
                     <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
                       <span
                         aria-hidden="true"
                         className="flex h-20 w-20 items-center justify-center rounded-3xl text-5xl shadow-btn"
-                        style={{ backgroundColor: word.color }}
+                        style={{ backgroundColor: 'var(--surface)' }}
                       >
                         {word.emoji}
                       </span>
-                      <span className="font-display text-3xl font-extrabold text-ink">{word.word}</span>
+                      <span className={`font-display text-3xl font-extrabold ${brightText ? 'on-grape' : 'text-ink'}`}>
+                        {word.word}
+                      </span>
                       <span className="rounded-full bg-surface px-4 py-1.5 font-display text-sm font-bold text-ink-soft shadow-soft">
                         👆 Tap to flip!
                       </span>
@@ -93,7 +99,7 @@ export function MagicWords({ onBack, onStarEarned, starEarned }: LessonPageProps
                   {/* BACK */}
                   <div
                     className="flip-face flip-back card-chunky rounded-3xl p-6"
-                    style={{ background: `linear-gradient(160deg, var(--surface), ${word.soft})`, borderColor: word.color }}
+                    style={{ backgroundColor: 'var(--surface)', borderColor: word.color }}
                   >
                     <div className="flex h-full flex-col items-center justify-center gap-2.5 overflow-y-auto text-center">
                       <span aria-hidden="true" className="text-4xl">
@@ -101,7 +107,7 @@ export function MagicWords({ onBack, onStarEarned, starEarned }: LessonPageProps
                       </span>
                       <span className="font-display text-xl font-extrabold text-ink">{word.scenario}</span>
                       <span
-                        className="rounded-2xl px-4 py-2 font-display text-lg font-bold text-ink"
+                        className={`rounded-2xl px-4 py-2 font-display text-lg font-bold ${brightText ? 'on-grape' : 'text-ink'}`}
                         style={{ backgroundColor: word.color }}
                       >
                         {word.example}

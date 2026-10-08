@@ -13,7 +13,7 @@ export function Home({ onNavigate, stars, totalLessons }: HomeProps) {
     <div className="mx-auto w-full max-w-6xl px-4 pb-16 sm:px-6">
       <section
         className="hero-banner card-chunky relative mt-6 overflow-hidden p-6 sm:p-10"
-        style={{ background: 'linear-gradient(120deg, var(--sunny-soft), var(--sky-soft), var(--bubble-soft))' }}
+        style={{ backgroundColor: 'var(--sunny-soft)' }}
       >
         <span
           aria-hidden="true"
@@ -38,19 +38,19 @@ export function Home({ onNavigate, stars, totalLessons }: HomeProps) {
 
         <div className="relative flex flex-col items-center gap-6 text-center sm:flex-row sm:gap-10 sm:text-left">
           <div className="animate-floaty shrink-0">
-            <Mascot size={190} className="drop-shadow-xl" />
+            <Mascot size={190} className="mascot-wave drop-shadow-xl" />
           </div>
           <div className="flex-1">
-            <p className="font-display text-sm font-bold uppercase tracking-widest text-grape sm:text-base">
+            <p className="font-display text-sm font-bold uppercase tracking-widest text-ink sm:text-base">
               Welcome to the
             </p>
             <h1 className="display-title font-display text-4xl font-extrabold leading-tight text-ink sm:text-6xl">
               Little Heroes
-              <span className="block bg-gradient-to-r from-coral via-grape to-sky bg-clip-text text-transparent">
+              <span className="block text-grape">
                 Safety & Manners Academy
               </span>
             </h1>
-            <p className="mt-3 text-lg font-medium text-ink-soft sm:text-xl">
+            <p className="mt-3 text-lg font-medium text-ink/85 sm:text-xl">
               Learn Magic Words, Safety Rules, and Super-Powers!
             </p>
             <div className="mt-5 flex flex-wrap items-center justify-center gap-3 sm:justify-start">
@@ -72,38 +72,45 @@ export function Home({ onNavigate, stars, totalLessons }: HomeProps) {
       </h2>
 
       <nav className="menu-grid grid gap-5 sm:gap-6" aria-label="Learning topics">
-        {TOPICS.map((topic) => (
-          <button
-            key={topic.id}
-            type="button"
-            onClick={() => onNavigate(topic.id)}
-            className="card-chunky card-press tap-target group relative flex min-h-52 flex-col items-center justify-center gap-2 overflow-hidden rounded-3xl p-6 text-center"
-            style={{ background: `linear-gradient(135deg, ${topic.soft} 0%, var(--surface) 70%)` }}
-            aria-label={`Open ${topic.title}`}
-          >
-            <span
-              aria-hidden="true"
-              className="absolute right-4 top-3 text-2xl opacity-70 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12"
+        {TOPICS.map((topic) => {
+          const brightText = topic.soft === 'var(--grape-soft)'
+          return (
+            <button
+              key={topic.id}
+              type="button"
+              onClick={() => onNavigate(topic.id)}
+              className="card-chunky card-press tap-target topic-card group relative flex min-h-52 flex-col items-center justify-center gap-2 overflow-hidden rounded-3xl p-6 text-center"
+              style={{ backgroundColor: topic.soft }}
+              aria-label={`Open ${topic.title}`}
             >
-              {topic.sticker}
-            </span>
-            <span
-              aria-hidden="true"
-              className="flex h-20 w-20 items-center justify-center rounded-3xl text-5xl shadow-btn transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
-              style={{ backgroundColor: topic.color }}
-            >
-              {topic.emoji}
-            </span>
-            <span className="font-display text-2xl font-extrabold text-ink">{topic.title}</span>
-            <span className="text-base font-medium text-ink-soft">{topic.subtitle}</span>
-            <span
-              className="mt-1 inline-block rounded-full px-4 py-1.5 font-display text-sm font-bold text-white transition-transform duration-300 group-hover:scale-110"
-              style={{ backgroundColor: topic.color }}
-            >
-              Let&apos;s Go! →
-            </span>
-          </button>
-        ))}
+              <span
+                aria-hidden="true"
+                className="topic-sticker absolute right-4 top-3 text-2xl opacity-70 transition-transform duration-300 group-hover:scale-125 group-hover:rotate-12"
+              >
+                {topic.sticker}
+              </span>
+              <span
+                aria-hidden="true"
+                className="flex h-20 w-20 items-center justify-center rounded-3xl text-5xl shadow-btn transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-110"
+                style={{ backgroundColor: 'var(--surface)' }}
+              >
+                {topic.emoji}
+              </span>
+              <span className={`font-display text-2xl font-extrabold ${brightText ? 'on-grape' : 'text-ink'}`}>
+                {topic.title}
+              </span>
+              <span className={`text-base font-medium ${brightText ? 'on-grape' : 'text-ink/85'}`}>
+                {topic.subtitle}
+              </span>
+              <span
+                className="mt-1 inline-block rounded-full px-4 py-1.5 font-display text-sm font-bold transition-transform duration-300 group-hover:scale-110"
+                style={{ backgroundColor: 'var(--surface)', color: topic.color }}
+              >
+                Let&apos;s Go! →
+              </span>
+            </button>
+          )
+        })}
       </nav>
     </div>
   )
